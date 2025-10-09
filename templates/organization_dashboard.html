@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Кабинет работодателя</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="logo">HR Tech</div>
+            <ul class="menu">
+                <li class="active">🏢 Главная</li>
+                <li>Мои вакансии</li>
+                <li>Кандидаты</li>
+                <li>Заявки от ВУЗов</li>
+                <li>Аналитика</li>
+            </ul>
+            <div class="bottom-menu">
+                <a href="{{ url_for('logout') }}">Выйти</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Панель управления компании</h2>
+                <div class="user-info">{{ user.email }}</div>
+            </header>
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Активные вакансии</h3>
+                        <div class="number">0</div>
+                        <button class="btn btn-sm">+ Добавить</button>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Новые отклики</h3>
+                        <div class="number">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Стажеры</h3>
+                        <div class="number">0</div>
+                    </div>
+                </div>
+                
+                <div class="placeholder-block">
+                    <h3>Функционал в разработке</h3>
+                    <p>Здесь будет список откликов и инструменты для автоматизации взаимодействия с ВУЗами.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Кабинет ВУЗа</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" style="background-color: #2c3e50;">
+            <div class="logo">HR Tech ВУЗ</div>
+            <ul class="menu">
+                <li class="active">🎓 Главная</li>
+                <li>Студенты</li>
+                <li>Договоры с компаниями</li>
+                <li>Отчетность</li>
+            </ul>
+            <div class="bottom-menu">
+                <a href="{{ url_for('logout') }}">Выйти</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Панель управления учебного заведения</h2>
+                <div class="user-info">{{ user.email }}</div>
+            </header>
+            <div class="content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Студентов на практике</h3>
+                        <div class="number">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Компаний-партнеров</h3>
+                        <div class="number">ОЭЗ Технополис</div>
+                    </div>
+                </div>
+                
+                <div class="placeholder-block">
+                    <h3>Направления на стажировку</h3>
+                    <p>Функционал для массовой отправки студентов на практику к резидентам в разработке.</p>
+                    <button class="btn btn-primary">Создать новую заявку</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

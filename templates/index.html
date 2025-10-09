@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карьера в Технополис Москва</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">Технополис.Карьера</div>
+        <nav>
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Войти / Регистрация</a>
+        </nav>
+    </header>
+    
+    <main class="hero-section">
+        <div class="hero-content">
+            <h1>Обеспечение кадрами технологического суверенитета</h1>
+            <p>Единая платформа, объединяющая резидентов ОЭЗ «Технополис Москва», вузы и талантливых специалистов.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-large">Я ищу работу</a>
+                <a href="{{ url_for('login') }}" class="btn btn-large btn-outline">Я работодатель</a>
+            </div>
+        </div>
+    </main>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Соискателям</h3>
+            <p>Умный поиск вакансий, ИИ-помощник и прямая связь с работодателями.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Компаниям</h3>
+            <p>Автоматизация найма, доступ к базе студентов и аналитика рынка.</p>
+        </div>
+        <div class="feature-card">
+            <h3>ВУЗам</h3>
+            <p>Управление практиками, стажировками и трудоустройством выпускников.</p>
+        </div>
+    </section>
+</body>
+</html>
