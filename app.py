@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 
-SUPABASE_URL = "https://cdeefekmliclmxexfprq.supabase.co"
-SUPABASE_KEY  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkZWVmZWttbGljbG14ZXhmcHJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDUyMjksImV4cCI6MjA3NTQ4MTIyOX0.s7Qf-deUh4d-PqJA8TvPWD1i5rB8s5Smxin0xamc_KI"
+SUPABASE_URL = ""
+SUPABASE_KEY  =  ""
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
