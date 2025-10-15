@@ -13,9 +13,9 @@ SUPABASE_KEY  =  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-from organizations import organizations_bp
-from students import students_bp
-from universities import universities_bp
+from internal.organisation.organizations import organizations_bp
+from internal.student.students import students_bp
+from internal.university.universities import universities_bp
 
 app.register_blueprint(organizations_bp)
 app.register_blueprint(students_bp)
