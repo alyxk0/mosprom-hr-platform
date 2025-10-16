@@ -1,0 +1,149 @@
+<!-- templates/student/resume_form.html -->
+{% extends "layout.html" %}
+
+{% block title %}Моё резюме{% endblock %}
+
+{% block header_title %}Редактирование резюме{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .chip { display:inline-block; padding:0.25rem .5rem; border-radius: 12px; margin: .15rem; background:#e9ecef; }
+        .required::after { content: " *"; color: #dc3545; }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="alert alert-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" id="resume-form">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Основная информация</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label required">Имя</label>
+                        <input name="first_name" class="form-control" value="{{ resume.first_name if resume else '' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label required">Фамилия</label>
+                        <input name="last_name" class="form-control" value="{{ resume.last_name if resume else '' }}" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Короткое резюме / summary</label>
+                        <textarea name="summary" class="form-control" rows="3">{{ resume.summary if resume else '' }}</textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Навыки (через запятую)</label>
+                        <input name="skills" id="skills-input" class="form-control" placeholder="python, django, postgresql" value="{{ resume.skills|join(', ') if resume and resume.skills else '' }}">
+                        <div id="skills-chips" class="mt-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Опыт работы -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0">Опыт работы</h5>
+                    <button type="button" id="add-exp" class="btn btn-sm btn-outline-secondary">Добавить</button>
+                </div>
+                <div id="exps-container">
+                    {% if resume and resume.experiences %}
+                        {% for e in resume.experiences %}{# Существующий блок #}{% endfor %}
+                    {% else %}
+                        {# Пустой блок по умолчанию #}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Образование -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0">Образование</h5>
+                    <button type="button" id="add-ed" class="btn btn-sm btn-outline-secondary">Добавить</button>
+                </div>
+                <div id="eds-container">
+                    {% if resume and resume.educations %}{% for ed in resume.educations %}{#...#}{% endfor %}{% else %}{#...#}{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-primary" type="submit">Сохранить резюме</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Добавление блоков опыта/образования
+  function makeExpItem() {
+    const div = document.createElement('div');
+    div.className = 'exp-item border rounded p-2 mb-2';
+    div.innerHTML = `
+      <div class="row g-2">
+        <div class="col-md-5"><input name="exp_company[]" class="form-control" placeholder="Компания"></div>
+        <div class="col-md-4"><input name="exp_title[]" class="form-control" placeholder="Должность"></div>
+        <div class="col-md-3">
+          <input name="exp_start[]" class="form-control" placeholder="начало (YYYY-MM)">
+          <input name="exp_end[]" class="form-control mt-1" placeholder="конец (YYYY-MM или Present)">
+        </div>
+      </div>
+      <textarea name="exp_description[]" class="form-control mt-2" placeholder="Описание"></textarea>
+    `;
+    return div;
+  }
+  function makeEdItem() {
+    const div = document.createElement('div');
+    div.className = 'ed-item border rounded p-2 mb-2';
+    div.innerHTML = `
+      <div class="row g-2">
+        <div class="col-md-6"><input name="ed_institution[]" class="form-control" placeholder="Учебное заведение"></div>
+        <div class="col-md-3"><input name="ed_degree[]" class="form-control" placeholder="Степень"></div>
+        <div class="col-md-3"><input name="ed_field[]" class="form-control" placeholder="Направление"></div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md-3"><input name="ed_start[]" class="form-control" placeholder="начало"></div>
+        <div class="col-md-3"><input name="ed_end[]" class="form-control" placeholder="конец"></div>
+        <div class="col-md-6"><input name="ed_description[]" class="form-control" placeholder="Доп. информация"></div>
+      </div>
+    `;
+    return div;
+  }
+
+  document.getElementById('add-exp').addEventListener('click', () => {
+    document.getElementById('exps-container').appendChild(makeExpItem());
+  });
+  document.getElementById('add-ed').addEventListener('click', () => {
+    document.getElementById('eds-container').appendChild(makeEdItem());
+  });
+
+  // Простая визуализация скилов как "чипсы" (отобразим, если есть ввод)
+  const skillsInput = document.getElementById('skills-input');
+  const chips = document.getElementById('skills-chips');
+  function renderSkills() {
+    chips.innerHTML = '';
+    const val = skillsInput.value.trim();
+    if (!val) return;
+    val.split(',').map(s => s.trim()).filter(Boolean).forEach(s => {
+      const c = document.createElement('span');
+      c.className = 'chip';
+      c.textContent = s;
+      chips.appendChild(c);
+    });
+  }
+  skillsInput.addEventListener('input', renderSkills);
+  renderSkills();
+</script>
+
+{% endblock %}

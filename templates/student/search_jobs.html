@@ -1,0 +1,103 @@
+<!-- templates/student/search_jobs.html -->
+{% extends "layout.html" %}
+
+{% block title %}Поиск работы{% endblock %}
+
+{% block header_title %}Вакансии резидентов{% endblock %}
+
+{% block extra_head %}
+    <style>
+        /* Стили, специфичные для чата и вакансий */
+        .chat-wrapper { position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; z-index: 1000; }
+        .chat-header { background: var(--primary-color, #0d6efd); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { height: 300px; overflow-y: auto; padding: 15px; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
+        .message.bot { background: #e9ecef; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .message.user { background: var(--primary-color, #0d6efd); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-area input { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+        .vacancy-list { display: grid; gap: 20px; }
+        .vacancy-card { background: white; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+        .vacancy-card h4 { margin: 0 0 10px 0; color: var(--primary-color, #0d6efd); }
+        .meta { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <!-- Список демо-вакансий -->
+    <div class="vacancy-list">
+        {% for vac in vacancies %}
+        <div class="vacancy-card">
+            <h4>{{ vac.title }}</h4>
+            <div class="meta">{{ vac.company }} • {{ vac.salary }}</div>
+            <button class="btn btn-sm btn-outline-primary">Подробнее</button>
+            <button class="btn btn-sm btn-primary">Откликнуться</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ИИ Помощник -->
+    <div class="chat-wrapper">
+        <div class="chat-header">
+            🤖 HR Ассистент
+            <small style="font-weight: normal; cursor: pointer;" onclick="document.querySelector('.chat-body').innerHTML = ''">Очистить</small>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message bot">Привет! Я помогу вам найти работу или стажировку в Технополисе. Спросите меня о чем-нибудь.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Напишите сообщение..." onkeypress="handleKeyPress(event)">
+            <button class="btn btn-sm btn-primary" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chatInput');
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
+            chatInput.value = '';
+            const loadingId = addMessage('Печатает...', 'bot', true);
+
+            try {
+                const response = await fetch('/api/ai_assistant', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+                addMessage(data.response, 'bot');
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage("Ошибка соединения с сервером.", 'bot');
+            }
+        }
+
+        function addMessage(text, sender, isLoading=false) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.innerHTML = text;
+            if (isLoading) {
+                div.id = 'msg-' + Date.now();
+                div.style.fontStyle = 'italic';
+                div.style.color = '#999';
+            }
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return div.id;
+        }
+    </script>
+{% endblock %}
